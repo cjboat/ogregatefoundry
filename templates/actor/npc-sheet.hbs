@@ -1,6 +1,8 @@
 <form class="ogre-gate-form actor npc" autocomplete="off">
   <header class="sheet-header npc-header">
-    <img class="profile-img" src="{{actor.img}}" data-edit="img" data-action="showPortraitArtwork" title="{{actor.name}}" />
+    <div class="profile-image-frame">
+      <img class="profile-img" src="{{actor.img}}" title="{{actor.name}}" data-action="show-image-preview" data-image-field="img" data-tooltip="View portrait image" />
+    </div>
     <section class="identity-grid">
       <label>Name <input type="text" name="name" value="{{actor.name}}" /></label>
       <label>Martial Name <input type="text" name="system.identity.martialName" value="{{system.identity.martialName}}" /></label>
@@ -49,13 +51,39 @@
 
   <section class="sheet-body">
     <div class="tab front active" data-group="primary" data-tab="front">
+      <section class="panel npc-defenses">
+        <h2>Defenses</h2>
+        <div class="npc-defense-edit-header">
+          <span>Roll</span>
+          <span>Defense</span>
+          <span>Base</span>
+          <span>Rank</span>
+          <span>Qi</span>
+          <span>Mod</span>
+          <span>Drain</span>
+          <span>Total</span>
+        </div>
+        {{#each defenses as |defense|}}
+          <div class="npc-defense-edit-row">
+            <button class="roll-icon-button" type="button" data-action="roll-defense" data-defense="{{defense.key}}" data-tooltip="{{defense.tooltip}}">{{defense.shortLabel}}</button>
+            <span class="defense-label" data-tooltip="{{defense.tooltip}}">{{defense.label}}</span>
+            <input type="number" name="system.defenses.{{defense.key}}.base" value="{{defense.data.base}}" min="0" max="10" />
+            <input type="number" name="system.defenses.{{defense.key}}.ranks" value="{{defense.data.ranks}}" min="0" max="10" />
+            <input type="number" name="system.defenses.{{defense.key}}.qiBonus" value="{{defense.data.qiBonus}}" min="0" max="10" />
+            <input type="number" name="system.defenses.{{defense.key}}.modifier" value="{{defense.data.modifier}}" min="-10" max="10" />
+            <input type="number" name="system.defenses.{{defense.key}}.drain" value="{{defense.data.drain}}" min="0" max="20" />
+            <strong>{{defense.rating}}</strong>
+          </div>
+          <div class="npc-defense-expertise-row">
+            <span>Expertise</span>
+            <input type="text" name="system.defenses.{{defense.key}}.expertise" value="{{defense.data.expertise}}" />
+            <input type="text" name="system.defenses.{{defense.key}}.expertiseNote" value="{{defense.data.expertiseNote}}" placeholder="Condition or note" />
+          </div>
+        {{/each}}
+      </section>
+
       <section class="panel npc-main-skills">
         <h2>Skills</h2>
-        <div class="npc-defense-strip">
-          {{#each defenses as |defense|}}
-            <button class="roll-icon-button" type="button" data-action="roll-defense" data-defense="{{defense.key}}" data-tooltip="{{defense.tooltip}}">{{defense.label}} {{defense.rating}}</button>
-          {{/each}}
-        </div>
         <div class="npc-skill-drop-zone">
           {{#each npcSkillGroups as |group|}}
             <section class="npc-skill-group" data-skill-group="{{group.key}}">
@@ -153,7 +181,10 @@
                 <div class="item-list">
                   {{#each items as |technique|}}
                     <div class="item-line compact technique-line" data-item-id="{{technique.item.id}}">
-                      <span>{{technique.item.name}}</span>
+                      <button class="technique-icon-button" type="button" data-action="show-item-image-preview" data-item-id="{{technique.item.id}}" data-tooltip="View {{technique.item.name}} art">
+                        <img src="{{technique.item.img}}" alt="{{technique.item.name}}" />
+                      </button>
+                      <span class="technique-name"><strong>{{technique.item.name}}</strong></span>
                       <span data-tooltip="Required Qi Rank; techniques do not spend Qi.">Qi {{technique.item.system.qiRank}}</span>
                       <span class="technique-damage" data-tooltip="{{technique.damage.tooltip}}">{{technique.damage.label}}</span>
                       <span class="item-row-actions">

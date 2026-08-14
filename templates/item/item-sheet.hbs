@@ -1,6 +1,8 @@
 <form class="ogre-gate-form item" autocomplete="off">
   <header class="sheet-header item-header">
-    <img class="profile-img" src="{{item.img}}" data-edit="img" data-action="showPortraitArtwork" title="{{item.name}}" />
+    <div class="profile-image-frame">
+      <img class="profile-img" src="{{item.img}}" title="{{item.name}}" data-action="show-image-preview" data-image-field="img" data-tooltip="View item image" />
+    </div>
     <section class="item-summary">
       <label>Name <input type="text" name="name" value="{{item.name}}" /></label>
       <label>Type <input type="text" value="{{item.type}}" disabled /></label>

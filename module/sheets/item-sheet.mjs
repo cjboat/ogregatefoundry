@@ -251,6 +251,9 @@ export class OgreGateItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
         return this.#onFieldChange(event);
       });
     });
+    this.element.querySelectorAll("[data-action='show-image-preview']").forEach((element) => {
+      element.addEventListener("click", (event) => this.#onShowImagePreview(event));
+    });
   }
 
   #onFieldChange(event) {
@@ -295,5 +298,108 @@ export class OgreGateItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     }
 
     return this.item.update(updates);
+  }
+
+  #onShowImagePreview(event) {
+    event.preventDefault();
+    const field = event.currentTarget?.dataset?.imageField ?? "img";
+    const src = foundry.utils.getProperty(this.item, field) ?? this.item.img ?? "";
+    return this.#showImagePopout({ doc: this.item, field, src, title: this.item.name });
+  }
+
+  #showImagePopout({ doc, field, src, title }) {
+    const V14ImagePopout = foundry.applications?.apps?.ImagePopout;
+    const LegacyImagePopout = globalThis.ImagePopout;
+    const Popout = V14ImagePopout ?? LegacyImagePopout;
+    if (!Popout) {
+      ui.notifications?.warn("Image preview is not available in this Foundry version.");
+      return null;
+    }
+
+    const popout = V14ImagePopout
+      ? new Popout({ src, uuid: doc.uuid, window: { title, controls: [] } })
+      : new Popout(src, { title, uuid: doc.uuid, shareable: true });
+
+    const rendered = popout.render(true);
+    Promise.resolve(rendered).then(() => this.#injectImagePopoutControls(popout, { doc, field }));
+    return rendered;
+  }
+
+  #injectImagePopoutControls(popout, { doc, field }) {
+    const inject = () => {
+      const root = this.#applicationElement(popout);
+      if (!root || root.querySelector(".ogre-gate-image-popout-actions")) return;
+
+      const content = root.querySelector(".window-content") ?? root;
+      const htmlDocument = root.ownerDocument ?? globalThis.document;
+      root.classList.add("ogre-gate-image-popout");
+      content.classList.add("ogre-gate-image-popout-content");
+
+      const controls = htmlDocument.createElement("div");
+      controls.className = "ogre-gate-image-popout-actions";
+
+      if (game.user?.isGM) {
+        controls.appendChild(this.#imagePopoutButton(htmlDocument, "Show to Players", (clickEvent) => {
+          clickEvent.preventDefault();
+          clickEvent.stopPropagation();
+          if (typeof popout.shareImage === "function") return popout.shareImage();
+          if (typeof popout.share === "function") return popout.share();
+          return ui.notifications?.warn("Image sharing is not available in this Foundry version.");
+        }));
+      }
+
+      if (this.#canEditImage(doc)) {
+        controls.appendChild(this.#imagePopoutButton(htmlDocument, "Edit", (clickEvent) => {
+          clickEvent.preventDefault();
+          clickEvent.stopPropagation();
+          return this.#pickImage(doc, field, (path) => {
+            const previewImage = content.querySelector("img");
+            if (previewImage) previewImage.src = path;
+          });
+        }));
+      }
+
+      if (controls.children.length) content.appendChild(controls);
+    };
+
+    inject();
+    globalThis.setTimeout(inject, 50);
+  }
+
+  #imagePopoutButton(htmlDocument, label, callback) {
+    const button = htmlDocument.createElement("button");
+    button.type = "button";
+    button.textContent = label;
+    button.addEventListener("click", callback);
+    return button;
+  }
+
+  #applicationElement(application) {
+    const element = application.element ?? application.window?.element;
+    if (element instanceof HTMLElement) return element;
+    if (element?.[0] instanceof HTMLElement) return element[0];
+    return null;
+  }
+
+  #canEditImage(doc) {
+    return Boolean(game.user?.isGM || doc?.isOwner || doc?.canUserModify?.(game.user, "update"));
+  }
+
+  #pickImage(doc, field, onPicked) {
+    const current = foundry.utils.getProperty(doc, field) ?? doc.img ?? "";
+    const Picker = foundry.applications?.apps?.FilePicker ?? globalThis.FilePicker;
+    if (!Picker) {
+      ui.notifications?.warn("File picker is not available in this Foundry version.");
+      return null;
+    }
+    const picker = new Picker({
+      type: "image",
+      current,
+      callback: async (path) => {
+        await doc.update({ [field]: path });
+        onPicked?.(path);
+      }
+    });
+    return picker.browse();
   }
 }

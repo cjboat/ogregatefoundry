@@ -1,9 +1,18 @@
 # The Wandering Heroes of Ogre Gate for Foundry VTT
 
-A Foundry VTT v13 game system for *The Wandering Heroes of Ogre Gate* by Bedrock Games.
+A Foundry VTT v14-ready game system for *The Wandering Heroes of Ogre Gate* by Bedrock Games.
 - System by: Geek IO Dev Team
 
 ***This projrect uses copyright material owned by Bedrock Games, under their Bedrock Games Community Use Policy. This is not an official product of Bedrock Games.***
+
+# v 0.2.3
+## Foundry v14 bug-fix patch
+- Marked the system as verified for Foundry VTT v14 while keeping v13 as the current minimum supported version.
+- Started the v14 bug-fix iteration as the next stabilization pass after the Chapter 9 NPC import work.
+- Restored actor, NPC, monster, and item portrait image previews on ApplicationV2 sheets by wiring thumbnail clicks to Foundry's image popout.
+- Added editable NPC/monster Defense rows on the Main tab so imported statblock defenses can be corrected directly from the sheet.
+- Moved portrait actions into the large image preview with GM-only `Show to Players` and owner/GM `Edit` controls.
+- Added Kung Fu Technique art thumbnails on actor and NPC Martial tabs, with quick preview and automatic art on technique Use/Cathartic chat cards.
 
 # v 0.2.2
 ## NPC and Monster pass 2

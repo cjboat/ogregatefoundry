@@ -820,6 +820,7 @@ export class OgreGateActor extends Actor {
       rollMode: options.rollMode,
       deepPenalties: systemRule("deepPenalties"),
       returnOutcome: Boolean(options.returnOutcome),
+      art: options.art,
       extra: [
         item.system.drain ? `<div class="ogre-gate-chat-row"><strong>Drain</strong><span>-${item.system.drain} rank(s)</span></div>` : "",
         raceModifier ? `<div class="ogre-gate-chat-row"><strong>Race Modifier</strong><span>${raceModifier > 0 ? "+" : ""}${raceModifier}d10</span></div>` : "",
@@ -850,6 +851,7 @@ export class OgreGateActor extends Actor {
       rollMode: options.rollMode,
       deepPenalties: systemRule("deepPenalties"),
       returnOutcome: Boolean(options.returnOutcome),
+      art: options.art,
       extra: [
         skill.drain ? `<div class="ogre-gate-chat-row"><strong>Drain</strong><span>-${skill.drain} rank(s)</span></div>` : "",
         raceModifier ? `<div class="ogre-gate-chat-row"><strong>Race Modifier</strong><span>${raceModifier > 0 ? "+" : ""}${raceModifier}d10</span></div>` : "",
@@ -987,6 +989,7 @@ export class OgreGateActor extends Actor {
       tn,
       modifier: Number(modifier ?? 0) + attackModifier,
       returnOutcome: cathartic || hasTechniqueDamage || hasNormalDamage || hasDirectWounds || hasTargetDrains || hasTargetEffects || isStance,
+      art: item.img ? { src: item.img, alt: item.name } : null,
       extra: [
         `<div class="ogre-gate-chat-row"><strong>Activation Skill</strong><span>${escapeHtml(activationGroupLabel)}: ${escapeHtml(activationLabel)} (${activationRanks} rank${activationRanks === 1 ? "" : "s"}${activationModifier ? `, ${activationModifier > 0 ? "+" : ""}${activationModifier}d10 skill modifier` : ""})</span></div>`,
         `<div class="ogre-gate-chat-row"><strong>Technique Use</strong><span>${isStance ? "Stance" : isCounter ? "Counter Reaction" : mode}${cathartic ? "; resolve Imbalance from this result" : ""}</span></div>`,

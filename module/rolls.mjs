@@ -16,10 +16,14 @@ function escapeHtml(value = "") {
     .replace(/"/g, "&quot;");
 }
 
-async function createRollMessage({ actor, label, roll, results, selected, tn, success, totalSuccesses, poolLabel, rollMode, extra = "" }) {
+async function createRollMessage({ actor, label, roll, results, selected, tn, success, totalSuccesses, poolLabel, rollMode, extra = "", art = null }) {
+  const artBlock = art?.src
+    ? `<img class="ogre-gate-chat-image" src="${escapeHtml(art.src)}" alt="${escapeHtml(art.alt ?? label)}" />`
+    : "";
   const content = `
     <section class="ogre-gate-chat-card">
       <h3>${label}</h3>
+      ${artBlock}
       <div class="ogre-gate-chat-row"><strong>Pool</strong><span>${poolLabel}</span></div>
       <div class="ogre-gate-chat-row"><strong>TN</strong><span>${tn}</span></div>
       <div class="ogre-gate-chat-dice">${formatDice(results)}</div>
@@ -100,7 +104,7 @@ export class OgreGateRoll {
     return { selected, success, successes, totalSuccesses, tens };
   }
 
-  static async skill({ actor, label, ranks, modifier = 0, tn = 6, rollMode, deepPenalties = false, extra = "", returnOutcome = false } = {}) {
+  static async skill({ actor, label, ranks, modifier = 0, tn = 6, rollMode, deepPenalties = false, extra = "", art = null, returnOutcome = false } = {}) {
     const pool = this.resolvePool(ranks, modifier, { deepPenalties });
     const roll = await new Roll(pool.formula).evaluate();
     const results = getDiceResults(roll);
@@ -117,7 +121,8 @@ export class OgreGateRoll {
       totalSuccesses: outcome.totalSuccesses,
       poolLabel: pool.label,
       rollMode,
-      extra
+      extra,
+      art
     });
     return returnOutcome ? { message, outcome, results, selected: outcome.selected } : message;
   }

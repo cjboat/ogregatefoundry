@@ -1,6 +1,8 @@
 <form class="ogre-gate-form actor" autocomplete="off">
   <header class="sheet-header">
-    <img class="profile-img" src="{{actor.img}}" data-edit="img" data-action="showPortraitArtwork" title="{{actor.name}}" />
+    <div class="profile-image-frame">
+      <img class="profile-img" src="{{actor.img}}" title="{{actor.name}}" data-action="show-image-preview" data-image-field="img" data-tooltip="View portrait image" />
+    </div>
     <section class="identity-grid">
       <label>Name <input type="text" name="name" value="{{actor.name}}" /></label>
       <label>Martial Name <input type="text" name="system.identity.martialName" value="{{system.identity.martialName}}" /></label>
@@ -701,19 +703,24 @@
               <div class="item-list">
               {{#each items as |technique|}}
                   <div class="item-line compact technique-line" data-item-id="{{technique.item.id}}">
-                    <span>
-                      {{technique.item.name}}
-                      {{#if technique.secret}} <strong class="technique-tag" data-tooltip="Secret Technique">Secret</strong>{{/if}}
-                      {{#if technique.accessNotes}} <strong class="technique-tag" data-tooltip="{{technique.accessNotes}}">Access</strong>{{/if}}
-                      {{#if technique.catharticOnly}} <strong class="technique-tag" data-tooltip="Profound, Evil, and Immortal Techniques must be used Cathartically.">Cathartic Only</strong>{{/if}}
-                      {{#if technique.demonFlaw}} <strong class="technique-tag warning" data-tooltip="Mastering an Evil Technique requires a Demon Flaw Table roll; the Demon Flaw is permanent.">Demon Flaw</strong>{{/if}}
-                      {{#if technique.missingDiscipline}} <strong class="technique-tag warning" data-tooltip="{{technique.disciplineTooltip}}">Discipline</strong>{{/if}}
-                      {{#if technique.combination}} <strong class="technique-tag" data-tooltip="{{technique.prerequisiteTooltip}}">Combination</strong>{{/if}}
-                      {{#if technique.missingPrerequisites.length}} <strong class="technique-tag warning" data-tooltip="{{technique.missingPrerequisiteTooltip}}">Missing</strong>{{/if}}
-                      {{#if technique.actorRequirementTooltip}} <strong class="technique-tag" data-tooltip="{{technique.actorRequirementTooltip}}">Actor Req</strong>{{/if}}
-                      {{#if technique.missingActorRequirements.length}} <strong class="technique-tag warning" data-tooltip="{{technique.missingActorRequirementTooltip}}">Missing Actor</strong>{{/if}}
-                      {{#if technique.requirementNotes}} <strong class="technique-tag" data-tooltip="{{technique.requirementNotes}}">Req</strong>{{/if}}
-                      {{#if technique.formation}} <strong class="technique-tag" data-tooltip="{{technique.formationTooltip}}">Formation{{#if technique.formationParticipants}} {{technique.formationParticipants}}+{{/if}}</strong>{{/if}}
+                    <button class="technique-icon-button" type="button" data-action="show-item-image-preview" data-item-id="{{technique.item.id}}" data-tooltip="View {{technique.item.name}} art">
+                      <img src="{{technique.item.img}}" alt="{{technique.item.name}}" />
+                    </button>
+                    <span class="technique-name">
+                      <strong>{{technique.item.name}}</strong>
+                      <span class="technique-tags">
+                        {{#if technique.secret}} <strong class="technique-tag" data-tooltip="Secret Technique">Secret</strong>{{/if}}
+                        {{#if technique.accessNotes}} <strong class="technique-tag" data-tooltip="{{technique.accessNotes}}">Access</strong>{{/if}}
+                        {{#if technique.catharticOnly}} <strong class="technique-tag" data-tooltip="Profound, Evil, and Immortal Techniques must be used Cathartically.">Cathartic Only</strong>{{/if}}
+                        {{#if technique.demonFlaw}} <strong class="technique-tag warning" data-tooltip="Mastering an Evil Technique requires a Demon Flaw Table roll; the Demon Flaw is permanent.">Demon Flaw</strong>{{/if}}
+                        {{#if technique.missingDiscipline}} <strong class="technique-tag warning" data-tooltip="{{technique.disciplineTooltip}}">Discipline</strong>{{/if}}
+                        {{#if technique.combination}} <strong class="technique-tag" data-tooltip="{{technique.prerequisiteTooltip}}">Combination</strong>{{/if}}
+                        {{#if technique.missingPrerequisites.length}} <strong class="technique-tag warning" data-tooltip="{{technique.missingPrerequisiteTooltip}}">Missing</strong>{{/if}}
+                        {{#if technique.actorRequirementTooltip}} <strong class="technique-tag" data-tooltip="{{technique.actorRequirementTooltip}}">Actor Req</strong>{{/if}}
+                        {{#if technique.missingActorRequirements.length}} <strong class="technique-tag warning" data-tooltip="{{technique.missingActorRequirementTooltip}}">Missing Actor</strong>{{/if}}
+                        {{#if technique.requirementNotes}} <strong class="technique-tag" data-tooltip="{{technique.requirementNotes}}">Req</strong>{{/if}}
+                        {{#if technique.formation}} <strong class="technique-tag" data-tooltip="{{technique.formationTooltip}}">Formation{{#if technique.formationParticipants}} {{technique.formationParticipants}}+{{/if}}</strong>{{/if}}
+                      </span>
                     </span>
                     <span data-tooltip="Required Qi Rank; techniques do not spend Qi.">Qi {{technique.item.system.qiRank}}</span>
                     <span class="technique-damage" data-tooltip="{{technique.damage.tooltip}}">{{technique.damage.label}}</span>
